@@ -1,49 +1,24 @@
-from queue import Queue
 import csv
-import queue
-import numpy as np
+from typing import List
+from process import Process, Processor
 
-processes = Queue()
-pid = []
-cycles = []
-memory = []
-p1 = []
-p2 = []
-p3 = []
-p4 = []
-p5 = []
-p6 = []
-turn_time = 0
+def data():
+    processes = []
 
-csvfile = open("processes.csv", "r")
-file = csv.DictReader(csvfile)
-for process in file:
-    pid.append(process["Process ID"])
-    cycles.append(process["CPU Cycles"])
-    memory.append(process["Memory Requirement"])
-    processes.put(process)
+    with open("processes.csv", encoding="utf8") as csvfile:
+        next(csvfile)
+        input = csv.reader(csvfile)
+        for pid, cpu_cycles, memory in input:
+            processes.append(Process(pid=int(pid), cpu_cycles=int(cpu_cycles), memory=int(memory)))
+        return processes
+        
 
 # FIFO program for question 1 part 1
+    
 def fifo():
-    for i in range(42):
-        p1.append(processes.get())
-        p2.append(processes.get())
-        p3.append(processes.get())
-        p4.append(processes.get())
-    for i in range(41):
-        p5.append(processes.get())
-        p6.append(processes.get())
-
-    wait_time = 0
-    turn_time = 0
-
-    for i, value in enumerate(p1):
-        turn_time += int(value)
-
-
-    p1_avg_turn_time = turn_time / len(p1)
-    print("average wait time is: " + str(p1_avg_turn_time))
-
-
-
+    processes: List[Process] = data()
+    for process in processes:
+        process.arrival_time = 0
+    processors: List[Processor] = [Processor() for i in range(6)]
+        
 
