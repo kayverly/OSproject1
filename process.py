@@ -8,34 +8,34 @@ class Process:
         self.cpu_cycles: int = cpu_cycles
         self.memory = memory
         self.cycles_left: int = cpu_cycles
-        self.prev_process: Process = None
-        self.next_process: Process = None
         self.arrival_time: float = None
         self.wait_time: float = None
         self.turnaround_time: float = None
+        self.next_process: Process = None
+        self.prev_process: Process = None
 
-    def __str__(self) -> str:
+    def printStr(self) -> str:
         return f'Process(PID: {self.pid}, Cycles: {self.cpu_cycles}, Memory Requirement: {self.memory}'
 
     @property
     def next(self) -> Process:
         return self.next_process
-    
+
     @next.setter
     def next(self, next_process: Process) -> None:
-       next_process.prev_process = self
-       self.next_process = next_process
-
-    def calculate(self):
-        self.wait_time = (self.prev_process.turnaround_time - self.arrial_time
-        if (self.prev_process is not None)
-        else (self.arrival_time))
+        next_process.prev_process = self
+        self.next_process = next_process
+    
+    def evaluate(self):
+        self.wait_time = (
+            self.prev_process.turnaround_time - self.arrival_time
+            if self.prev_process is not None
+            else self.arrival_time)
         self.turnaround_time = self.wait_time + self.cpu_cycles
 
 class Processor(Iterator, Iterable):
-
-    schedule = []
     assigned_work = 0
+
     def __init__(self) -> None:
         self.head: Process = None
         self.tail: Process = None
@@ -56,12 +56,11 @@ class Processor(Iterator, Iterable):
         if self.head is None and self.tail is None:
             self.head = process
             self.tail = process
-        else:
+        else: 
             self.tail.next = process
             self.tail = process
-
-    def remove(self) -> None:
-        if self.head is None and self.tail is None:   
+    def remove(self) -> Process:
+        if self.head is None and self.tail is None:
             return None
         if self.head is self.tail:
             process = self.head
@@ -71,5 +70,4 @@ class Processor(Iterator, Iterable):
         process = self.tail
         process.prev_process.next_process = None
         self.tail = process.prev_process
-        return process    
-
+        return process
